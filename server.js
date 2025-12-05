@@ -17,7 +17,10 @@ require("dotenv").config();
 const app = express();
 // Security middlewares
 app.use(helmet());  // secure headers
-app.use(cors());    // allow frontend access
+app.use(cors({
+    origin: process.env.FRONTEND_URL || '*',
+}));
+    // allow frontend access
 app.use(express.json()); // parse JSON safely
 
 // Rate Limiting
