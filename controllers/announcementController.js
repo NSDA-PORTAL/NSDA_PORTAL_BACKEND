@@ -36,16 +36,24 @@ const createAnnouncement = async (req, res) => {
 const updateAnnouncement = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, content, category } = req.body;
+    const { title, message, category } = req.body;
 
     const announcement = await Announcement.findById(id);
     if (!announcement) {
       return res.status(404).json({ success: false, message: "Announcement not found" });
     }
 
-    announcement.title = title || announcement.title;
-    announcement.content = content || announcement.content;
-    announcement.category = category || announcement.category;
+    // Basic validation for provided fields
+    if (title !== undefined && String(title).trim() === "") {
+      return res.status(400).json({ success: false, message: "Title cannot be empty" });
+    }
+    if (message !== undefined && String(message).trim() === "") {
+      return res.status(400).json({ success: false, message: "Message cannot be empty" });
+    }
+
+    announcement.title = title !== undefined ? title : announcement.title;
+    announcement.message = message !== undefined ? message : announcement.message;
+    announcement.category = category !== undefined ? category : announcement.category;
 
     await announcement.save();
 
